@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Res } from '@nestjs/common
 import { UserService } from './user.service';
 import { Response } from 'express';
 import { IRequestResponse } from 'src/shared/models/general.models';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateUserDto } from './dto/user.dto';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
@@ -19,6 +19,7 @@ export class UserController {
   @ApiResponse({ status: 401, description: 'El token se encuentra vencido o es invalido.' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
   @ApiResponse({ status: 500, description: 'Ha ocurrido un error' })
+  @ApiOperation({summary: 'Consultar Usuario' })
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     if (!id) {
@@ -39,6 +40,7 @@ export class UserController {
   @ApiResponse({ status: 403, description: 'No se ha podido actualizar el usuario.' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
   @ApiResponse({ status: 500, description: 'Ha ocurrido un error' })
+  @ApiOperation({summary: 'Actualizar Usuario' })
   @Patch(':id')
   async update(@Param('id') id: string, @Body() userDto: UpdateUserDto, @Res() res: Response) {
     if (!id) {
@@ -68,6 +70,7 @@ export class UserController {
   @ApiResponse({ status: 403, description: 'No se ha podido eliminar al usuario.' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
   @ApiResponse({ status: 500, description: 'Ha ocurrido un error' })
+  @ApiOperation({summary: 'Eliminar Usuario' })
   @Delete(':id')
   async delete(@Param('id') id: string, @Res() res: Response) {
     if (!id) {

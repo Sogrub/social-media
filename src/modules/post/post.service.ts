@@ -17,12 +17,12 @@ export class PostService {
   async create(userId: string, post: PostDto): Promise<IRequestResponse> {
     const newPost = {...post, userId}
     
-    return this.PostModel.create(newPost).then(async res => {
-      return this.UserModel.findByIdAndUpdate(userId, { $push: {posts: res._id} }).then(res => {
+    return this.PostModel.create(newPost).then(async resPost => {
+      return this.UserModel.findByIdAndUpdate(userId, { $push: {posts: resPost._id} }).then(res => {
         return{
           status: 200,
           message: 'El post ha sido creado exitosamente',
-          data: res
+          data: resPost
         } as IRequestResponse
       }).catch((err) => {
         return{
@@ -122,12 +122,17 @@ export class PostService {
     }
   }
 
-  async findAll(page: number, limit: number): Promise<IRequestResponse> {
+  async findAll(page: number, limit: number, filter?: any): Promise<IRequestResponse> {
     const skip = (page - 1) * limit;
+    let newFilter = { deletedAt: { $exists: false } }
 
-    const totalCount = await this.PostModel.countDocuments({ deletedAt: { $exists: false } })
+    if (filter) {
+      newFilter = { ...newFilter, ...JSON.parse(filter)}
+    }
+    
+    const totalCount = await this.PostModel.countDocuments(newFilter)
 
-    return this.PostModel.find({ deletedAt: { $exists: false } }).skip(skip).limit(limit).then((res) => {
+    return this.PostModel.find(newFilter).skip(skip).limit(limit).then((res) => {
       return {
         status: 200,
         message: 'Post consultados exitosamente',

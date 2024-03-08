@@ -10,6 +10,7 @@ export class AuthMiddleware implements NestMiddleware {
     const headerToken = req.headers.authorization || '';
     const token = String(headerToken).replace("Bearer ", "");
     const jwtValidate = this.jwtService.validate(token);
+    console.log('jwtValidate', jwtValidate)
 
     if (!jwtValidate.status) {
       return res.status(401).send({
